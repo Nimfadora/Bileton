@@ -24,11 +24,11 @@ public class UserTicketController extends HttpServlet{
         String [] arr = tickets.split(",");
         String outputId = "";
         for(String id : arr){
-            File file = new File("C:\\Users\\Владелец\\IdeaProjects\\Bileton\\src\\main\\webapp\\reportTemplates\\"+id+".html");
+            File file = new File("resources\\reportTemplates\\"+id+".html");
             System.out.println("Html file with id = " + id+" delete is "+file.delete());
             outputId += id;
         }
-        File file = new File("C:\\Users\\Владелец\\IdeaProjects\\Bileton\\src\\main\\webapp\\reportTemplates\\"+outputId+".pdf");
+        File file = new File("resources\\reportTemplates\\"+outputId+".pdf");
         System.out.println("Pdf file with id = "+ outputId +" delete is "+file.delete());
     }
 

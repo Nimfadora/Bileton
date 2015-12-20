@@ -20,41 +20,23 @@ import java.util.List;
 
 @WebServlet({"/admin/ticket"})
 public class TicketController extends HttpServlet{
+
+    private ObjectMapper mapper = new ObjectMapper();
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String json = Params.EMPTYSTRING;
         InputStream input = request.getInputStream();
         BufferedInputStream in = new BufferedInputStream(input);
         BufferedReader reader =
                 new BufferedReader(
                         new InputStreamReader(in));
-        int i;
-        while ((i = reader.read()) != -1)
-        {
-            json += (char) i;
-        }
-        in.close();
-        ObjectMapper mapper = new ObjectMapper();
-
-        TicketDto ticketReq = mapper.readValue(json, TicketDto.class);
-        List<TicketImpl> tickets = null;
+        TicketDto ticketReq = mapper.readValue(reader, TicketDto.class);
+        List<TicketImpl> tickets;
         if(ticketReq.getReserveType() == 1) {
             tickets = TicketService.getInstance().buyTicket(ticketReq.getPlacesId());
             ToPdfConverter.createPdf(HtmlTemplateRenderer.render(tickets), "123123");
         }
         else
             TicketService.getInstance().reserve(ticketReq.getPlacesId());
-
-
-
-//        request.setAttribute("Ticket", ticket);
-//        RequestDispatcher rd = getServletContext().getRequestDispatcher("/pages/ticket.jsp");
-//        rd.forward(request, response);
-
-//        PlayReportService service = new PlayReportService();
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        response.setContentType("application/json");
-//        mapper.writeValue(response.getOutputStream(), service.getAll());
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
