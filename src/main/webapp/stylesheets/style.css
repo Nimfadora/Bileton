@@ -1,0 +1,431 @@
+@font-face {
+  font-family: 'Astemper Bold';
+  src: url("../fonts/astamper_bold.ttf");
+}
+
+body {
+  background-color: black;
+  margin: 0 0;
+  -webkit-backface-visibility:hidden;
+}
+
+p, h1, button{
+  color: #000000;
+}
+
+a {
+  color: #00B7FF;
+}
+
+img{
+    float: left;
+}
+
+
+.menu {
+  height: 100%;
+  width: calc(25% - 1.2px);
+  float: left;
+
+  border-right: groove 1px #144854;
+}
+
+.upper {
+  text-align: center;
+  position: fixed;
+  height: 98px;
+  width: 100%;
+  background-image: url("../images/upper.png");
+}
+
+#logo{
+  margin-top: 4px;
+  height: 90px;
+  margin-left: calc(50% - 78px);
+}
+
+.leftCurtain {
+  background-color: #000000;
+  margin-top: 98px;
+  position: fixed;
+  width: 10%;
+  height: 200vh;
+  float: left;
+}
+
+.leftCurtain img {
+  width: 100%;
+  height: calc(100vh - 50px);
+}
+
+.rightCurtain {
+  background-color: #000000;
+  margin-top: 98px;
+  position: fixed;
+  margin-left: 90%;
+  width: 10%;
+  height: 200vh;
+  float: right;
+}
+
+.rightCurtain img {
+  width: 100%;
+  height: calc(100vh - 50px);
+}
+
+
+/*----------------------�������������-----------------------------*/
+#plot {
+  font-family: "Astemper Bold", serif;
+  margin-top: 208px;
+  margin-left: 10%;
+  background-color: #000000;
+  width: 80%;
+  border: 1px black;
+  float: left;
+}
+
+.play {
+  min-width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  background-color: white;
+  width: 48%;
+  height: 300px;
+  float: left;
+  margin: 1%;
+  /*transition: height 0.3s linear;*/
+}
+
+.add{
+  padding: 5px 0 0 10px;
+  width: 125%;
+}
+
+.add p{
+  text-align: justify;
+  margin: 0 0;
+  max-height: 290px;
+  overflow: auto;
+  width: 100%;
+}
+
+.play img {
+  padding: 10px;
+  height: 280px;
+  width: 200px;
+  object-fit: cover;
+}
+.play h1{
+  width: calc(100% - 330px) ;
+  float: left;
+}
+.play p{
+  font-size: 12pt;
+  margin-top: 0;
+  width: calc(100% - 330px) ;
+  float: left;
+}
+
+.price{
+  font-size: 14pt;
+  margin-right: 200px;
+  float: left ;
+  width: 160px;
+  height: 30px;
+  padding: 7px 0 0 5px;
+  background-color: #ffeda9;
+  border-radius: 10px;
+}
+.price p{
+  padding-left: 5px;
+  width: 100%;
+}
+
+
+
+.more, .less{
+  font: 14pt "Astemper Bold", serif;
+  margin-top: 10px;
+  float: left ;
+  width: 165px;
+  height: 40px;
+  padding-top: 7px;
+  background-color: #b1e89a;
+  border-radius: 10px;
+  border-style: none;
+}
+
+
+.right{
+  border-left: 2px dashed black;
+  float: right;
+  width: 108px;
+  height: 300px;
+  background-color: #de0e11;
+  box-shadow: 1px 1px 2px 1px #000000;
+}
+
+.right p{
+  width: auto;
+  font-size: 23pt;
+  padding: 5px;
+  margin: 0 0;
+}
+.right img{
+  padding: 10px;
+  margin-top: 80px;
+  height: 80px;
+  width: 80px;
+}
+
+
+.right .btn {
+  margin: 80px 0 0 12px;
+  background-image: url("../images/ticket.png");
+  background-size: cover;
+  background-color: transparent;
+  padding: 40px 40px;
+  border: none;
+  outline:none;
+  !important;
+}
+.right .btn:active{
+  background-color: transparent;
+  outline: none;
+  box-shadow: none;
+  !important;
+}
+
+span{
+  font: 14pt "Segoe UI", serif;
+}
+
+/*--------------------------------------------------------------*/
+.sortMenu {
+  position: fixed;
+  margin-top: 98px;
+  margin-left: 10%;
+  width: 80%;
+  background-color: #000000;
+  height: 120px;
+  float: left;
+}
+
+label {
+  color: #b5b5b5;
+}
+
+.width{
+  float: left;
+}
+
+#gogol.form-control{
+  display: inline;
+  !important;
+}
+
+.label{
+  font-size: 100%;
+  !important;
+}
+
+.sorttab{
+  min-width: 600px;
+  padding: 20px;
+  padding-left: 17%;
+}
+
+#search, #clear{
+  padding: 5px;
+  margin: 0 5px 0 5px;
+  background-color: #B1E89A;
+}
+
+/*#firstRow, #secondRow{*/
+  /*padding: 5px;*/
+/*}*/
+#secondRow{
+  margin-left: 15%;
+}
+
+/*----------------------------pop-up----------------------------------*/
+#myModal{
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.popUpContent{
+  margin: 0 15px 0 15px;
+  width: 588px;
+  height: 420px;
+}
+
+#placeholder{
+  float: left;
+  width: 422px;
+  height: 342px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.place {
+  background-color: black;
+  text-align: center;
+  cursor: pointer;
+  float: left;
+  margin: 2px;
+  width: 18px;
+  height: 18px;
+  border: none;
+  font-size: 13px;
+  position: relative;
+}
+
+#stage{
+  background-color: #e6cfa7;
+  width: 390px;
+  height: 28px;
+  border: none;
+  font-size: 12pt;
+  margin-left: 30px;
+}
+#stage p{
+  margin: 0 0;
+  padding: 5px;
+  text-align: center;
+}
+
+.audience{
+}
+
+.placesContainer{
+  height: 22px;
+}
+
+.audienceRow{
+  text-align: center;
+  float: left;
+  margin: 2px 2px 0 2px;
+  background-color: #e6cfa7;
+  width: 22px;
+  height: 18px;
+  border: none;
+  font-size: 10px;
+}
+
+.row{
+  margin: 0 !important;
+}
+
+.aisle{
+  margin-top: 24px;
+}
+
+.modal-dialog{
+  width: 620px;
+}
+
+.modal-body{
+  width: 618px;
+  height: 440px;
+  !important;
+}
+
+.choosenContainer{
+  width: 166px;
+  padding-left: 14px;
+  border-bottom: 1px solid #e5e5e5;
+  overflow: auto;
+  float: right;
+  height: 368px;
+}
+
+.legend{
+  padding-left: 83px;
+  float: left;
+  height: 40px;
+  width: 416px;
+}
+
+.legend p{
+  margin: 6px 6px 6px 0;
+  float: left;
+  width: 50px;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.legend div{
+  float: left;
+  width: 18px;
+  height: 18px;
+  border: none;
+  margin: 7px;
+}
+
+.c1{
+  background-color: #B1E89A;
+}
+
+.c2{
+  background-color: #92d8fb;
+}
+.c3{
+  background-color: #ffeda9;
+}
+
+
+
+.priceContainer{
+  border-top: 2px solid #e5e5e5;
+  padding: 15px;
+  float: left;
+  width: 171px;
+  height: 38px;
+}
+
+.modal-footer:before{
+  float: left;
+  !important;
+}
+
+
+.chosen_place{
+  background-color: red !important;
+ }
+.ch_place{
+  width: 76px;
+  float: left;
+  font-size: 11pt;
+}
+.chosen_row{
+  width: 76px;
+  float: left;
+  font-size: 11pt;
+}
+
+/*-----------------------checkout--------------------------------*/
+
+.checkoutForm{
+  margin-left: 15px;
+  width: 580px;
+}
+
+.lastStep{
+  margin-left: 50px;
+  width: 550px;
+}
+
+#pup {
+  font-family: "Astemper Bold", serif;
+  position:absolute;
+  z-index: 200;
+  padding: 5px;
+  margin-left: 10px;
+  margin-top: 5px;
+  width: 250px;
+  border-radius: 10px;
+  border-style: none;
+  background-color: #B1E89A;
+  color: black;
+  font-size: 0.95em;
+}

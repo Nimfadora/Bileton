@@ -1,0 +1,25 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" media="print, handheld" href="../stylesheets/print.css"/>
+</head>
+<body>
+<div class="play">
+    <img src="../images/${img}"/>
+    <div class="info">
+        <h1>${play}</h1>
+        <p>Театр: <span>${theatre}</span></p>
+        <p>Труппа: <span>${troupe}</span></p>
+        <p>Актёры: <span>${actors}</span></p>
+        <div class="price">Цена:<span> ${price} грн</span></div>
+        <p class="half">Ряд: ${row}</p>
+        <p class="half">Место: ${place}</p>
+    </div>
+    <div class="right">
+        <p>${date}</p>
+        <p>${time}</p>
+        <p class="barcode">№${barcode}</p>
+    </div>
+</div>
+</body>
+</html>
