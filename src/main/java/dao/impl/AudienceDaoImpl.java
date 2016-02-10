@@ -6,18 +6,16 @@ import entity.impl.PlaceImpl;
 import service.ConnectionFactory;
 import util.DbUtil;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class AudienceDaoImpl implements AudienceDao{
     private Connection connection;
-    private Statement statement;
+    private PreparedStatement statement;
     private static AudienceDao dao;
 
+    private final static String GET_ALL = "SELECT place.* FROM play, place, audience, contract  WHERE play.play_id = ? AND play.play_id = contract.play_id AND audience.audience_id = contract.audience_id and place.audience_id = audience.audience_id Order By place.row_number, place.place_number;";
     private AudienceDaoImpl() { }
 
     public static AudienceDao getInstance(){
@@ -53,13 +51,13 @@ public class AudienceDaoImpl implements AudienceDao{
     }
 
     public List<PlaceImpl> getAll( Long playId) {
-        String query = "SELECT place.* FROM play, place, audience, contract  WHERE play.play_id = "+playId+" AND play.play_id = contract.play_id AND audience.audience_id = contract.audience_id and place.audience_id = audience.audience_id Order By place.row_number, place.place_number;";
         ResultSet rs = null;
         List<PlaceImpl> audience = new LinkedList<>();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(GET_ALL);
+            statement.setLong(1, playId);
+            rs = statement.executeQuery();
             while (rs.next()){
                 PlaceImpl place = new PlaceImpl();
                 place.setId(rs.getLong(1));

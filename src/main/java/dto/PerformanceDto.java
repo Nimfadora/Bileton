@@ -6,6 +6,7 @@ public class PerformanceDto {
     private String troupe;
     private Long spectacle_id;
     private String spectacle;
+    private String category;
 
     public PerformanceDto() {
     }
@@ -48,6 +49,14 @@ public class PerformanceDto {
 
     public void setSpectacle_id(Long spectacle_id) {
         this.spectacle_id = spectacle_id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override

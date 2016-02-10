@@ -31,10 +31,9 @@ public class Automatization {
         String query = "INSERT INTO place VALUES ";
         int category = 1;
         for (int i = 1; i < 15; i++) {
-//            if (i == 4 || i == 10)
-//                category++;
+            if (i == 4 || i == 10)
+                category++;
             for (int j = 1; j < 19; j++) {
-                if (!(i == 12 && j > 16) && !(i == 13 && j > 14) && !(i == 14 && j > 12))
                     query += "(NULL, " + audience_id + ", " + category + ", " + i + ", " + j + "," + "0),";
             }
         }

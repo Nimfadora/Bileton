@@ -11,7 +11,7 @@ import java.util.List;
 
 public class TicketDao {
     public static final String RESERVE_QUERY = "UPDATE place SET state = 1 WHERE place_id = ?;";
-    public static final String BUY_QUERY = "SELECT place.place_number, place.row_number, troupe.name, actors, spectacle.name, theatre.name, contract.prices, date, time, place.place_id, play.play_id " +
+    public static final String BUY_QUERY = "SELECT place.place_number, place.row_number, place.category, troupe.name, actors, spectacle.name, theatre.name, contract.prices, date, time, place.place_id, play.play_id " +
             "FROM spectacle, troupe, play, performance, actor, role, contract, audience, theatre, place, " +
             "(SELECT performance.performance_id, GROUP_CONCAT(actor.name SEPARATOR ',') AS actors " +
             "FROM play, performance, actor, role " +
@@ -58,15 +58,16 @@ public class TicketDao {
                 TicketImpl ticket = new TicketImpl();
                 ticket.setPlace(rs.getInt(1));
                 ticket.setRow(rs.getInt(2));
-                ticket.setTroupe(rs.getString(3));
-                ticket.setActors(rs.getString(4));
-                ticket.setPlay(rs.getString(5));
-                ticket.setTheatre(rs.getString(6));
-                ticket.setPrice(rs.getString(7));
-                ticket.setDate(rs.getString(8));
-                ticket.setTime(rs.getString(9));
-                String barcode = String.valueOf(rs.getInt(10));
-                barcode += String.valueOf(rs.getInt(11));
+                ticket.setCategory(rs.getInt(3));
+                ticket.setTroupe(rs.getString(4));
+                ticket.setActors(rs.getString(5));
+                ticket.setPlay(rs.getString(6));
+                ticket.setTheatre(rs.getString(7));
+                ticket.setPrice(rs.getString(8));
+                ticket.setDate(rs.getString(9));
+                ticket.setTime(rs.getString(10));
+                String barcode = String.valueOf(rs.getInt(11));
+                barcode += String.valueOf(rs.getInt(12));
                 ticket.setBarcode(Long.valueOf(barcode));
                 tickets.add(ticket);
 

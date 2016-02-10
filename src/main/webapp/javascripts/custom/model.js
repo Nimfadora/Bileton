@@ -17,6 +17,8 @@ App.Models.Play = Backbone.Model.extend({
     }
 });
 
+App.Models.LastModalStep = Backbone.Model.extend({});
+
 App.Models.Place = Backbone.Model.extend();
 
 

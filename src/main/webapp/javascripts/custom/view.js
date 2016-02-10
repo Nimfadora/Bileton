@@ -42,7 +42,7 @@ App.Views.PlayView = Backbone.View.extend({
         audience.fetch({
             success: function () {
                 var audienceView = new App.Views.AudienceView({collection: audience});
-                $('.modal-body').append(audienceView.render().$el);
+                $("[data-step=1]").append(audienceView.render().$el);
             }
         });
 
@@ -74,13 +74,31 @@ App.Views.PlaceView = Backbone.View.extend({
 
 });
 
+App.Views.LastModalStepView = Backbone.View.extend({
+    tagName: 'div',
+    templateBuy: _.template("<div class=\"lastStep\"><p>Билеты будут высланы Вам на указанный email адрес в течении получаса.</p>" +
+    "<p>При желании Вы можете распечатать билеты прямо сейчас, как только завершится обработка Вашего заказа и кнопка станет активной.</p><p>Спасибо за использование нашего сервиса!</p>" +
+    "<button id=\"print\" type=\"button\" target=\"_blank\" class=\"btn btn-success\" disabled=\"true\">Распечатать</button></div>"),
+    templateBook: _.template("<div class=\"lastStep\"><p>Срок бронирования завершается за день перед спектаклем</p>" +
+        "<p>На Ваш email-адрес было отправлено сообщение с информацией о Вашем заказе.</p>" +
+        "<p>Чтобы получить билеты, Вы должны обратиться в кассу до оканчания срока брони, показав кассиру отправленное Вам письмо.</p></div>"),
+    initialize: function(){
+        this.render();
+    },
+    render: function(){
+        if(this.model.get("reserveType") == 1)
+            this.$el.html( this.templateBuy( this.model.toJSON() ) );
+        else
+            this.$el.html( this.templateBook( this.model.toJSON() ) );
+        $("[data-step=3]").append(this.$el);
+
+    }
+});
+
+
 App.Views.AudienceView = Backbone.View.extend({
     tagName: 'div',
-    className: "row",
-    attributes: {
-        'data-step': "1",
-        'data-title': "Выбор мест"
-    },
+    className: "popUpContent",
     arrOfPrices: [],
     arrOfPlaces: [],
     initialize: function () {
@@ -127,19 +145,16 @@ App.Views.AudienceView = Backbone.View.extend({
         }
         ticket.set("placesId", this.arrOfPlaces);
     },
-    template: _.template("<div class=\"popUpContent\"><div id=\"placeholder\"><div id=\"stage\"><p>Сцена</p></div><div class=\"audience\">" +
-        "<%var margin = 24; " +
-        " _.each(places, function(el, idx, places){" +
+    template: _.template("<div id=\"placeholder\"><div id=\"stage\"><p>Сцена</p></div><div class=\"audience\">" +
+        "<%_.each(places, function(el, idx, places){" +
         "if(el.get(\"category\")!=category){" +
         "categoryCounter++; " +
         "category = el.get(\"category\");" +
         "} if(el.get(\"placeNum\")==1){%>" +
         "<div class='row'><div class=\"audienceRow\">р <%=el.get(\"rowNum\")%></div><div class=\"placesContainer\">" +
-        "<%}if(el.get(\"rowNum\")>11 && el.get(\"placeNum\")==1){" +
-        "lim= lim - 2;%>" +
-        "<div class='place c<%=el.get(\"category\")%>' data-state='<%=el.get(\"state\")%>' data-row='<%=el.get(\"rowNum\")%>' id='<%=el.id%>' style=\"margin-left:<%=margin%> \"><%=el.get(\"placeNum\")%></div>" +
-        "<%margin = margin + 22;}else if(el.get(\"placeNum\") < lim){%>" +
-        "<div class='place c<%=el.get(\"category\")%>' data-state='<%=el.get(\"state\")%>' data-row='<%=el.get(\"rowNum\")%>' id='<%=el.id%>'><%=el.get(\"placeNum\")%></div>"+
+        "<%} if(el.get(\"placeNum\") < lim){%>" +
+        "<div class='place c<%=el.get(\"category\")%><% if(el.get(\"state\") == 0){%> disablePlace" +
+        "<%}%>' data-state='<%=el.get(\"state\")%>' data-row='<%=el.get(\"rowNum\")%>' id='<%=el.id%>'><%=el.get(\"placeNum\")%></div>"+
         "<%}else{%>" +
         "<div class='place c<%=el.get(\"category\")%>' data-state='<%=el.get(\"state\")%>' data-row='<%=el.get(\"rowNum\")%>' id='<%=el.id%>'><%=el.get(\"placeNum\")%></div></div></div>" +
         "<%} })%>" +
@@ -147,7 +162,7 @@ App.Views.AudienceView = Backbone.View.extend({
         "<div class='choosenContainer'></div><div class='legend'>" +
         "<% for(var i=0; i<categoryCounter; i++){%>" +
         "<div class='place c<%=i+1%>'></div><p><%=prices[i]%>грн</p>" +
-        "<%}%></div><div class='priceContainer'></div></div>"),
+        "<%}%></div><div class='priceContainer'></div>"),
     render: function () {
         this.$el.html(this.template({places: this.collection.models, rows: this.collection.models[this.collection.models.length -1].get("rowNum"), lim: 18 , category: -1, categoryCounter: 0, prices: collectionOfPlays.get(this.collection.play_id).get("prices")}));
         return this;
@@ -230,22 +245,15 @@ App.Views.PopUpView = Backbone.View.extend({
             btnLastStepHtml: 'Завершить',
             disableNextButton: false,
             completeCallback: function () {
-                var query = "";
-                var arr = ticket.get("placesId");
-                for(var i = 0; i< arr.length; i++){
-                    query += (arr[i] + ",");
-                }
-                ticket.fetch({
-                    data: {
-                        tickets: query.substr(0, query.length - 1)
-                    }
-                });
             },
             callbacks: {
                 '1': function () {
                     thisRef.disableNext();
                 },
                 '3': function () {
+                    var model = new App.Models.LastModalStep();
+                    model.set("reserveType", thisRef.checkoutView.model.get('reserveType'));
+                    var lastModalStepView = new App.Views.LastModalStepView({model: model});
                     ticket.set('email', thisRef.checkoutView.model.get('email'));
                     ticket.set('discount', thisRef.checkoutView.model.get('discount'));
                     ticket.set('reserveType', thisRef.checkoutView.model.get('reserveType'));
@@ -253,7 +261,8 @@ App.Views.PopUpView = Backbone.View.extend({
                     ticket.save(null,{
                         success: function(model, response){
                             ticket.set("pdfId", response);
-                            $(".getTicket").attr("href", "/bileton/reportTemplates/"+response+".pdf")
+                            $("#print").attr("onclick","window.open('bileton/ticketsPdf/"+response+".pdf')").removeAttr("disabled");
+                            //$(".getTicket").attr("href", "bileton/ticketsPdf/"+response+".pdf")
                         }
                     });
                 }

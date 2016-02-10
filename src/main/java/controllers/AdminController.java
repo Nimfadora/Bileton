@@ -11,7 +11,7 @@ import java.io.IOException;
 public class AdminController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //        System.out.println(req.getParameter("login"));
-        req.getRequestDispatcher("/pages/admin.jsp").forward(req, resp);
+        req.getRequestDispatcher("/pages/ticketStatistics.jsp").forward(req, resp);
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

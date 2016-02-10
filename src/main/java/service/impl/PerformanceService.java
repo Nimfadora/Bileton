@@ -40,6 +40,15 @@ public class PerformanceService {
         return dto;
     }
 
+    public List<PerformanceDto> search(String searchQuery, String sort) {
+        List<PerformanceImpl> entity = dao.search(searchQuery, sort);
+        List<PerformanceDto> dto = new LinkedList<>();
+        entity.forEach(ent -> {
+            dto.add(specialTransformToDto(ent));
+        });
+        return dto;
+    }
+
     public PerformanceImpl transformToEntity(PerformanceDto dto) {
         PerformanceImpl entity = new PerformanceImpl();
         entity.setId(dto.getId());
@@ -64,6 +73,7 @@ public class PerformanceService {
         dto.setTroupe(entity.getTroupe());
         dto.setSpectacle_id(entity.getSpectacle_id());
         dto.setTroupe_id(entity.getTroupe_id());
+        dto.setCategory(entity.getCategory());
         return dto;
     }
 }

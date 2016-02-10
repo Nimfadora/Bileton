@@ -13,7 +13,7 @@ import java.util.List;
 public class TroupeDaoImpl implements TroupeDao {
 
     private Connection connection;
-    private Statement statement;
+    private PreparedStatement statement;
     private static TroupeDaoImpl dao;
 
     private TroupeDaoImpl() {}
@@ -24,13 +24,35 @@ public class TroupeDaoImpl implements TroupeDao {
         return dao;
     }
 
+
+    public static final String CREATE = "INSERT troupe SET name= ? ;";
+    public static final String READ = "SELECT * FROM troupe WHERE id= ? ;";
+    public static final String UPDATE = "UPDATE troupe SET name= ? WHERE id= ? ;";
+    public static final String DELETE = "DELETE FROM troupe WHERE id= ? ;";
+    public static final String GET_ALL = "SELECT * FROM troupe;";
+
+    public static final String GET_STATISTICS = "SELECT troupe.name, Count(actor.actor_id) " +
+            "FROM troupe, actor " +
+            "WHERE actor.troupe_id = troupe.id " +
+            "GROUP BY troupe.id, troupe.name ;";
+
+
+    public static final String SEARCH_ALL_THE_REST = "SELECT * FROM troupe WHERE UPPER(troupe.name) != ? ;";
+    public static final String SEARCH = "SELECT * FROM troupe WHERE UPPER(troupe.name) = ?;";
+
+    public static final String SORT_ASC = "SELECT * FROM troupe ORDER BY troupe.name ASC;";
+    public static final String SORT_DESC = "SELECT * FROM troupe ORDER BY troupe.name DESC;";
+
+    public static final String SEARCH_ALL_THE_REST_SORT_ASC = "SELECT * FROM troupe WHERE UPPER(troupe.name) != ? ORDER BY troupe.name ASC;";
+    public static final String SEARCH_ALL_THE_REST_SORT_DESC = "SELECT * FROM troupe WHERE UPPER(troupe.name) != ? ORDER BY troupe.name DESC;";
+
     @Override
     public void create(TroupeImpl troupe) {
-        String query = "INSERT troupe SET name='"+troupe.getName()+"';";
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(CREATE);
+            statement.setString(1, troupe.getName());
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -41,13 +63,13 @@ public class TroupeDaoImpl implements TroupeDao {
 
     @Override
     public TroupeImpl read(Long key) {
-        String query = "SELECT * FROM troupe WHERE id='"+key+"';";
         ResultSet res;
         TroupeImpl troupe = new TroupeImpl();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            res = statement.executeQuery(query);
+            statement = connection.prepareStatement(READ);
+            statement.setLong(1, key);
+            res = statement.executeQuery();
             while (res.next()) {
                 troupe.setId(res.getLong(1));
                 troupe.setName(res.getString(2));
@@ -63,11 +85,12 @@ public class TroupeDaoImpl implements TroupeDao {
 
     @Override
     public void update(TroupeImpl troupe) {
-        String query = "UPDATE troupe SET name='"+troupe.getName()+"'WHERE id='"+troupe.getId()+"';";
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(UPDATE);
+            statement.setString(1, troupe.getName());
+            statement.setLong(2, troupe.getId());
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -78,11 +101,11 @@ public class TroupeDaoImpl implements TroupeDao {
 
     @Override
     public void delete(Long key) {
-        String query = "DELETE FROM troupe WHERE id='"+key+"';";//возможно нужно каскадное уаление
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(DELETE);
+            statement.setLong(1, key);
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -93,13 +116,12 @@ public class TroupeDaoImpl implements TroupeDao {
 
     @Override
     public List<TroupeImpl> getAll() {
-        String query = "SELECT * FROM troupe";
         ResultSet rs = null;
         List<TroupeImpl> troupes = new LinkedList<>();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(GET_ALL);
+            rs = statement.executeQuery();
             while (rs.next()){
                 TroupeImpl troupe = new TroupeImpl();
                 troupe.setId(rs.getLong(1));
@@ -118,16 +140,12 @@ public class TroupeDaoImpl implements TroupeDao {
 
 
     public List getTroupesStatistics(){
-        String query = "SELECT troupe.name, Count(actor.actor_id) \n" +
-                "FROM troupe, actor \n" +
-                "WHERE actor.troupe_id = troupe.id \n" +
-                "GROUP BY troupe.id, troupe.name ;";
         ResultSet rs = null;
         List<TroupeStatisticsImpl> lst = new LinkedList<>();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(GET_STATISTICS);
+            rs = statement.executeQuery();
             while (rs.next()) {
                 TroupeStatisticsImpl statistics = new TroupeStatisticsImpl();
                 statistics.setTroupe(rs.getString(1));
@@ -143,15 +161,6 @@ public class TroupeDaoImpl implements TroupeDao {
         }
         return lst;
     }
-
-    public static final String SEARCH_ALL_THE_REST = "SELECT * FROM troupe WHERE UPPER(troupe.name) != ? ;";
-    public static final String SEARCH = "SELECT * FROM troupe WHERE UPPER(troupe.name) = ?;";
-
-    public static final String SORT_ASC = "SELECT * FROM troupe ORDER BY troupe.name ASC;";
-    public static final String SORT_DESC = "SELECT * FROM troupe ORDER BY troupe.name DESC;";
-
-    public static final String SEARCH_ALL_THE_REST_SORT_ASC = "SELECT * FROM troupe WHERE UPPER(troupe.name) != ? ORDER BY troupe.name ASC;";
-    public static final String SEARCH_ALL_THE_REST_SORT_DESC = "SELECT * FROM troupe WHERE UPPER(troupe.name) != ? ORDER BY troupe.name DESC;";
 
     @Override
     public List<TroupeImpl> search(String searchQuery, String sort) {

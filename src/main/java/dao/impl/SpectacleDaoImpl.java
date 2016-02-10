@@ -11,7 +11,7 @@ import java.util.List;
 
 public class SpectacleDaoImpl implements SpectacleDao {
     private Connection connection;
-    private Statement statement;
+    private PreparedStatement statement;
     private static SpectacleDao dao;
 
     private SpectacleDaoImpl() {
@@ -23,14 +23,29 @@ public class SpectacleDaoImpl implements SpectacleDao {
         return dao;
     }
 
+    private static final String CREATE = "INSERT spectacle SET name= ? , summary= ? ;";
+    private static final String READ = "SELECT * FROM spectacle WHERE id= ?";
+    private static final String UPDATE = "UPDATE spectacle SET summary= ? , name= ? WHERE id= ? ;";
+    private static final String DELETE = "DELETE FROM spectacle WHERE id= ? ;";
+    private static final String GET_ALL = "SELECT * FROM spectacle;";
+
+    private static final String SEARCH_ALL_THE_REST = "SELECT * FROM spectacle WHERE UPPER(spectacle.name) != ? ;";
+    private static final String SEARCH = "SELECT * FROM spectacle WHERE UPPER(spectacle.name) = ?;";
+
+    private static final String SORT_ASC = "SELECT * FROM spectacle ORDER BY spectacle.name ASC;";
+    private static final String SORT_DESC = "SELECT * FROM spectacle ORDER BY spectacle.name DESC;";
+
+    private static final String SEARCH_ALL_THE_REST_SORT_ASC = "SELECT * FROM spectacle WHERE UPPER(spectacle.name) != ? ORDER BY spectacle.name ASC;";
+    private static final String SEARCH_ALL_THE_REST_SORT_DESC = "SELECT * FROM spectacle WHERE UPPER(spectacle.name) != ? ORDER BY spectacle.name DESC;";
+
     @Override
     public void create(SpectacleImpl entity) {
-        String query = "INSERT spectacle SET name='"+entity.getName()+"', summary='"+entity.getSummary()+"' ;";
-        ResultSet res;
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(CREATE);
+            statement.setString(1, entity.getName());
+            statement.setString(2, entity.getSummary());
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -41,13 +56,13 @@ public class SpectacleDaoImpl implements SpectacleDao {
 
     @Override
     public SpectacleImpl read(Long key) {
-        String query = "SELECT * FROM spectacle WHERE id="+key+";";
         ResultSet rs = null;
         SpectacleImpl spectacle = new SpectacleImpl();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(READ);
+            statement.setLong(1, key);
+            rs = statement.executeQuery();
             while (rs.next()){
                 spectacle.setId(rs.getLong(1));
                 spectacle.setName(rs.getString(2));
@@ -65,11 +80,13 @@ public class SpectacleDaoImpl implements SpectacleDao {
 
     @Override
     public void update(SpectacleImpl entity) {
-        String query = "UPDATE spectacle SET summary='"+entity.getSummary()+"', name='"+entity.getName()+"' WHERE id='"+entity.getId()+"';";
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(UPDATE);
+            statement.setString(1, entity.getSummary());
+            statement.setString(2, entity.getName());
+            statement.setLong(3, entity.getId());
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -80,11 +97,11 @@ public class SpectacleDaoImpl implements SpectacleDao {
 
     @Override
     public void delete(Long key) {
-        String query = "DELETE FROM spectacle WHERE id="+key+";";//возможно нужно каскадное уаление
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(DELETE);
+            statement.setLong(1, key);
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -95,13 +112,12 @@ public class SpectacleDaoImpl implements SpectacleDao {
 
     @Override
     public List<SpectacleImpl> getAll() {
-        String query = "SELECT * FROM spectacle;";
         ResultSet rs = null;
         List<SpectacleImpl> spectacles = new LinkedList<>();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(GET_ALL);
+            rs = statement.executeQuery();
             while (rs.next()){
                 SpectacleImpl spectacle = new SpectacleImpl();
                 spectacle.setId(rs.getLong(1));
@@ -119,14 +135,7 @@ public class SpectacleDaoImpl implements SpectacleDao {
         return spectacles;
     }
 
-    public static final String SEARCH_ALL_THE_REST = "SELECT * FROM spectacle WHERE UPPER(spectacle.name) != ? ;";
-    public static final String SEARCH = "SELECT * FROM spectacle WHERE UPPER(spectacle.name) = ?;";
 
-    public static final String SORT_ASC = "SELECT * FROM spectacle ORDER BY spectacle.name ASC;";
-    public static final String SORT_DESC = "SELECT * FROM spectacle ORDER BY spectacle.name DESC;";
-
-    public static final String SEARCH_ALL_THE_REST_SORT_ASC = "SELECT * FROM spectacle WHERE UPPER(spectacle.name) != ? ORDER BY spectacle.name ASC;";
-    public static final String SEARCH_ALL_THE_REST_SORT_DESC = "SELECT * FROM spectacle WHERE UPPER(spectacle.name) != ? ORDER BY spectacle.name DESC;";
 
     @Override
     public List<SpectacleImpl> search(String searchQuery, String sort) {

@@ -5,16 +5,13 @@ import entity.impl.*;
 import service.ConnectionFactory;
 import util.*;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class PlayDaoImpl implements PlayDao {
     private Connection connection;
-    private Statement statement;
+    private PreparedStatement statement;
     private static PlayDao dao;
 
     private PlayDaoImpl() { }
@@ -25,14 +22,33 @@ public class PlayDaoImpl implements PlayDao {
         return dao;
     }
 
+    private static final String GET_ALL = "SELECT * FROM play";
+    private static final String CREATE = "INSERT play SET date= ? , time= ? , performance_id= ? ;";
+    private static final String READ = "SELECT * FROM play WHERE play_id= ? ;";
+    private static final String UPDATE = "UPDATE play SET time= ? , date= ? , performance_id= ? WHERE play_id= ? ;";
+    private static final String DELETE = "DELETE FROM play WHERE play_id= ? ;";
+    private static final String GET_PLAYS_IN_THEATRES = "SELECT theatre.name, COUNT(play.play_id) AS Count FROM play, theatre, contract, audience " +
+            "WHERE contract.play_id = play.play_id " +
+            "AND contract.audience_id = audience.audience_id " +
+            "AND theatre.id = audience.theatre_id " +
+            "GROUP BY theatre.name;";
+    private static final String GET_PLAY_AUTO = "SELECT spectacle.name, performance.performance_id, spectacle.id FROM performance, spectacle " +
+            "WHERE spectacle.id = performance.spectacle_id;";
+    private static final String GET_WITHIN_7_DAYS = "SELECT theatre.name, COUNT(play.play_id) AS Count FROM play, theatre, contract, audience " +
+            "WHERE contract.play_id = play.play_id " +
+            "AND contract.audience_id = audience.audience_id " +
+            "AND theatre.id = audience.theatre_id " +
+            "AND play.date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)" +
+            "GROUP BY theatre.name;";;
+
+
     public List<PlayImpl> getAll(){
         List<PlayImpl> plays = new LinkedList<>();
-        String secQuery = "SELECT * FROM play";
         ResultSet rs = null;
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(secQuery);
+            statement = connection.prepareStatement(GET_ALL);
+            rs = statement.executeQuery();
             while (rs.next()){
                 PlayImpl play = new PlayImpl();
                 play.setId(rs.getLong(1));
@@ -53,12 +69,13 @@ public class PlayDaoImpl implements PlayDao {
 
     @Override
     public void create(PlayImpl play) {
-        String query = "INSERT play SET date='"+play.getDate()+"', time='"+play.getTime()+"', performance_id="+play.getPerformance_id()+";";
-        //INSERT play SET date='2015-12-11', time='21:00', performance_id=1;
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(CREATE);
+            statement.setDate(1, Date.valueOf(play.getDate()));
+            statement.setTime(2, Time.valueOf(play.getTime()));
+            statement.setLong(3, play.getId());
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -69,13 +86,13 @@ public class PlayDaoImpl implements PlayDao {
 
     @Override
     public PlayImpl read(Long key) {
-        String query = "SELECT * FROM play WHERE play_id="+key+";";
         ResultSet rs = null;
         PlayImpl play = new PlayImpl();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(READ);
+            statement.setLong(1, key);
+            rs = statement.executeQuery();
             while (rs.next()) {
                 play.setId(rs.getLong(1));
                 play.setDate(rs.getString(2));
@@ -94,11 +111,14 @@ public class PlayDaoImpl implements PlayDao {
 
     @Override
     public void update(PlayImpl play) {
-        String query = "UPDATE play SET time='"+play.getTime()+"', date='"+play.getDate()+"', performance_id="+play.getPerformance_id()+" WHERE play_id="+play.getId()+";";
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(UPDATE);
+            statement.setTime(1, Time.valueOf(play.getTime()));
+            statement.setDate(2, Date.valueOf(play.getDate()));
+            statement.setLong(3, play.getPerformance_id());
+            statement.setLong(4, play.getId());
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -109,11 +129,11 @@ public class PlayDaoImpl implements PlayDao {
 
     @Override
     public void delete(Long key) {
-        String query = "DELETE FROM play WHERE play_id="+key+";";//возможно нужно каскадное уаление
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            statement.execute(query);
+            statement = connection.prepareStatement(DELETE);
+            statement.setLong(1, key);
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -124,17 +144,12 @@ public class PlayDaoImpl implements PlayDao {
 
     @Override
     public List<PlaysInTheatresImpl> getPlaysInTheatres() {
-        String query = "SELECT theatre.name, COUNT(play.play_id) AS Count FROM play, theatre, contract, audience " +
-                "WHERE contract.play_id = play.play_id " +
-                "AND contract.audience_id = audience.audience_id " +
-                "AND theatre.id = audience.theatre_id " +
-                "GROUP BY theatre.name;";
         ResultSet rs = null;
         List<PlaysInTheatresImpl> lst = new LinkedList<>();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(GET_PLAYS_IN_THEATRES);
+            rs = statement.executeQuery();
             while (rs.next()) {
                 PlaysInTheatresImpl pit = new PlaysInTheatresImpl();
                 pit.setName(rs.getString(1));
@@ -152,14 +167,12 @@ public class PlayDaoImpl implements PlayDao {
     }
 
     public List<PlayAuto> getPlayAuto(){
-        String query = "SELECT spectacle.name, performance.performance_id, spectacle.id FROM performance, spectacle " +
-                "WHERE spectacle.id = performance.spectacle_id;";
         ResultSet rs = null;
         List<PlayAuto> lst = new LinkedList<>();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(GET_PLAY_AUTO);
+            rs = statement.executeQuery();
             while (rs.next()) {
                 PlayAuto pit = new PlayAuto();
                 pit.setSpectacle(rs.getString(1));
@@ -179,18 +192,12 @@ public class PlayDaoImpl implements PlayDao {
 
     @Override
     public List<PlaysDuringSevenDaysImpl> getPlaysDuringSevenDays() {
-        String query = "SELECT theatre.name, COUNT(play.play_id) AS Count FROM play, theatre, contract, audience " +
-                "WHERE contract.play_id = play.play_id " +
-                "AND contract.audience_id = audience.audience_id " +
-                "AND theatre.id = audience.theatre_id " +
-                "AND play.date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)" +
-                "GROUP BY theatre.name;";
         ResultSet rs = null;
         List<PlaysDuringSevenDaysImpl> lst = new LinkedList<>();
         try {
             connection = ConnectionFactory.getConnection();
-            statement = connection.createStatement();
-            rs = statement.executeQuery(query);
+            statement = connection.prepareStatement(GET_WITHIN_7_DAYS);
+            rs = statement.executeQuery();
             while (rs.next()) {
                 PlaysDuringSevenDaysImpl pit = new PlaysDuringSevenDaysImpl();
                 pit.setTheatre(rs.getString(1));

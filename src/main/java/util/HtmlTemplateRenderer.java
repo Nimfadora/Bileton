@@ -7,7 +7,6 @@ import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-import dto.TicketDto;
 import entity.impl.TicketImpl;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -15,7 +14,7 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 public class HtmlTemplateRenderer {
-    private static final String PATH = "C:\\Users\\Владелец\\IdeaProjects\\Bileton\\src\\main\\webapp\\reportTemplates";
+    private static final String PATH = "C:\\Users\\Владелец\\IdeaProjects\\Bileton\\src\\main\\webapp\\ticketsPdf";
     private static final String TEMPLATE = "ticket.vsl";
 
     private HtmlTemplateRenderer(){}
@@ -44,9 +43,8 @@ public class HtmlTemplateRenderer {
             velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
             StringWriter writer = new StringWriter();
             velocityEngine.mergeTemplate(TEMPLATE, "utf-8", context, writer);
-
             File file = new File(PATH, FILENAME);
-
+            System.out.println(file);
             try (FileOutputStream fop = new FileOutputStream(file)) {
                 if (!file.exists()) {
                     file.createNewFile();

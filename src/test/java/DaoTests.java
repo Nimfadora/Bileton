@@ -60,7 +60,7 @@ public class DaoTests {
     @Test
     public void autoTest(){
         Automatization dao = Automatization.getInstance();
-        dao.fillAudience((long) 5);
+        dao.fillAudience((long) 8);
     }
     @Test
     public void ticketTest(){

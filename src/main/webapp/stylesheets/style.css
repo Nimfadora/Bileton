@@ -281,6 +281,12 @@ label {
   position: relative;
 }
 
+.disablePlace{
+  pointer-events: none;
+  background-color: lightgray !important;
+  /*opacity: 0.4;*/
+}
+
 #stage{
   background-color: #e6cfa7;
   width: 390px;

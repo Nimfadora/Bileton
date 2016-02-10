@@ -11,6 +11,7 @@ public class TicketImpl {
     private String price;
     private String date;
     private String time;
+    private Integer category;
 
 
 
@@ -93,8 +94,17 @@ public class TicketImpl {
         return price;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
+    public void setPrice(String prices) {
+        String [] pricesArr = prices.split("/");
+        this.price = pricesArr[category-1];
+    }
+
+    public Integer getCategory() {
+        return category;
+    }
+
+    public void setCategory(Integer category) {
+        this.category = category;
     }
 
     @Override

@@ -106,7 +106,7 @@ public class PlayReportDao {
             if(!dateTo.equals(""))
                 query += "AND date <= CONVERT('"+dateTo+"', DATE) ";
         }
-        if(period != null && dateFrom != null && dateTo != null && !dateFrom.equals("") && !dateTo.equals(""))
+        if(period != null && dateFrom != null && dateTo != null && dateFrom.equals("") && dateTo.equals(""))
             query += "AND "+sortUtils.get(0) + " ";
 
         query += "GROUP BY play.play_id ";

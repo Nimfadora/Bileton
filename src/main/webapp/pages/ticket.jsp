@@ -6,8 +6,7 @@
 <head>
     <title>Ticket</title>
     <link rel="stylesheet" href="<c:url value="/stylesheets/admin.css" />">
-    <link rel="stylesheet"
-          href="<c:url value="/javascripts/libs/bower_components/bootstrap/dist/css/bootstrap.min.css"/>"/>
+    <link rel="stylesheet" href="<c:url value="/javascripts/libs/bower_components/bootstrap/dist/css/bootstrap.min.css"/>"/>
 </head>
 <body>
 <div id="plot">

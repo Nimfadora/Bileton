@@ -14,17 +14,17 @@
       <div class="container-fluid">
         <div>
           <ul class="nav navbar-nav">
-            <li><a href="<c:url value="/pages/admin.jsp"/>" id="home">Home</a></li>
-            <li><a href="<c:url value="/pages/theatre.jsp"/>" id="theatreTable">Theatre</a></li>
-            <li><a href="<c:url value="/pages/troupes.jsp"/>" id="troupeTable">Troupe</a></li>
-            <li class="active"><a href="<c:url value="/pages/spectacle.jsp"/>" id="spectacleTable">Spectacle</a></li>
-            <li><a href="<c:url value="/pages/performance.jsp"/>" id="perftable">Performance</a></li>
-            <li><a href="<c:url value="/pages/playReport.jsp"/>" id="playReport">PlayReport</a></li>
-            <li><a href="<c:url value="/admin/ticket"/>" id="ticket">Ticket</a></li>
-            <li><a href="<c:url value="/pages/editor.jsp"/>" id="editor">Editor</a></li>
-            <li><a href="<c:url value="/pages/pit.jsp"/>" id="pit">PlaysInTheatres</a></li>
-            <li><a href="<c:url value="/pages/troupeStatistics.jsp"/>" id="troupeSt">Troupe Statistics</a></li>
-            <li><a href="<c:url value="/pages/ticketStatistics.jsp"/>" id="ticketSt">Ticket Statistics</a></li>
+            <%--<li><a href="<c:url value="/pages/admin.jsp"/>" id="home">Home</a></li>--%>
+              <li><a href="<c:url value="/pages/theatre.jsp" />" id="theatreTable">Театр</a></li>
+              <li><a href="<c:url value="/pages/troupes.jsp" />" id="troupeTable">Труппа</a></li>
+              <li class="active"><a href="<c:url value="/pages/spectacle.jsp" />" id="spectacleTable">Спектакль</a></li>
+              <li><a href="<c:url value="/pages/performance.jsp" />" id="perftable">Представление</a></li>
+              <li><a href="<c:url value="/pages/playReport.jsp" />" id="playReport">Постановки: отчёт</a></li>
+              <%--<li><a href="<c:url value="/pages/ticket.jsp" />" id="ticket">Ticket</a></li>--%>
+              <li><a href="<c:url value="/pages/editor.jsp"/>" id="editor">Редактор</a></li>
+              <li><a href="<c:url value="/pages/pit.jsp"/>" id="pit">Театры-постановки: статистика</a></li>
+              <li><a href="<c:url value="/pages/troupeStatistics.jsp"/>" id="troupeSt">Труппы: статистика</a></li>
+              <li><a href="<c:url value="/pages/ticketStatistics.jsp"/>" id="ticketSt">Билеты: статистика</a></li>
           </ul>
         </div>
       </div>

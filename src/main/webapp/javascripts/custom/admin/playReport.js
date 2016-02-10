@@ -88,3 +88,9 @@ var playReportCollectionView = new App.Views.PlayReportCollectionView ({collecti
 playReportCollectionView.render();
 
 $('#table').append(playReportCollectionView.el);
+
+$(".print").on("click", function(){
+    $(this).hide();
+    window.print();
+    $(this).show();
+});

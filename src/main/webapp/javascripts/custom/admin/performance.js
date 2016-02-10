@@ -116,6 +116,59 @@ App.Views.FormView = Backbone.View.extend({
     }
 });
 
+App.Views.PerformanceFiltersView = Backbone.View.extend({
+    tagName: 'form',
+    attributes: {
+        'role': 'form'
+    },
+    events: {
+        'click #startSearch': 'search',
+        'click #clearSearch': 'clear',
+        'keypress #search': function(e){
+            if (e.keyCode == 13) {
+                this.search();
+            }
+        }
+    },
+    clear: function () {
+        $("#search").val("");
+        $("#sort :first").attr('selected', 'selected');
+        collectionOfPerfs.fetch({
+            success: function(){
+                perfCollectionView.render();
+                $('#table').append(perfCollectionView.el);
+            }
+        });
+    },
+    search: function(){
+        console.log("searching");
+        var sort = $("#sort option:selected").attr('id');
+        sort = (sort == 0)? "": (sort == 1) ? "ASC": "DESC";
+        collectionOfPerfs.fetch({
+            data: {
+                search: encodeURI($("#search").val().toUpperCase()),
+                sort: sort
+            },
+            success: function(){
+                perfCollectionView.render();
+                $('#table').append(perfCollectionView.el);
+            },
+            error: function(){
+                console.log("Value Not Found");
+            }
+        });
+    },
+    template: _.template($('#searchFilterTemplate').html()),
+    initialize: function () {
+        this.render();
+    },
+    render: function(){
+        this.$el.html( this.template( {placeholder: "Введите название спекталя..."} ) );
+        $('#filters').append(this.el);
+        return this;
+    }
+});
+
 App.Views.PerfView = Backbone.View.extend({
     tagName: 'tr',
     initialize: function(){
@@ -126,7 +179,7 @@ App.Views.PerfView = Backbone.View.extend({
     events: {
         //'click .more': 'fullInformation',
     },
-    template: _.template('<td><%=troupe%></td><td><%=spectacle%></td><td><input id="<%=id%>" type="checkbox" ></td>'),
+    template: _.template('<td class="<%=category%>"><%=troupe%></td><td class="<%=category%>"><%=spectacle%></td><td class="<%=category%>"><input id="<%=id%>" type="checkbox" ></td>'),
     render: function(){
         this.$el.html( this.template( this.model.toJSON() ) );
         return this;
@@ -166,7 +219,7 @@ App.Views.PerfCollectionView = Backbone.View.extend({
     render: function() {
         this.$el.empty();
         this.$el.append("<caption>Представления</caption><tr><th>Труппа</th><th>Спектакль</th><th>Удалить</th></tr>");
-        //this.collection.each(this.addOne, this);
+        this.collection.each(this.addOne, this);
         return this;
     }
 
@@ -186,5 +239,8 @@ spectacleCollection.fetch();
 
 var perfFormView = new App.Views.FormView({collection: troupeCollection});
 perfFormView.render();
+
+var performanceFiltersView = new App.Views.PerformanceFiltersView();
+performanceFiltersView.render();
 
 $('#table').append(perfCollectionView.el);

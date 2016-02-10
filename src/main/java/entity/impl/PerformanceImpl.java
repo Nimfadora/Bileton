@@ -6,6 +6,7 @@ public class PerformanceImpl {
     private String troupe;
     private Long spectacle_id;
     private String spectacle;
+    private String category = "default";
 
     public PerformanceImpl() {
     }
@@ -48,5 +49,13 @@ public class PerformanceImpl {
 
     public void setTroupe_id(Long troupe_id) {
         this.troupe_id = troupe_id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
